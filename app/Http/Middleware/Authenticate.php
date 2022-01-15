@@ -2,20 +2,25 @@
 
 namespace App\Http\Middleware;
 
+use Closure;
+use DateInterval;
+use DateTimeImmutable;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class Authenticate extends Middleware
 {
-    /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return string
-     */
-    protected function redirectTo($request)
+
+    public function handle($request, Closure $next, ...$guards)
     {
-        if (! $request->expectsJson()) {
-            return route('login');
+        $accessToken = $request->session()->get('accessToken', false);
+
+        $now = new DateTimeImmutable();
+        if (!empty($accessToken))  {
+            if ($accessToken['issued_at']->add(new DateInterval("PT{$accessToken['expires_in']}S")) >= $now) {
+                return $next($request);
+            }
         }
+
+        return redirect('/login');
     }
 }

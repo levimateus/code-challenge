@@ -12,4 +12,7 @@
 */
 
 Route::get('/', "SearchController@index");
+Route::get('/login', "Auth\LoginController@showLoginPage");
+Route::get('/spotify', "Auth\LoginController@login");
+Route::get('/login/validate', "Auth\LoginController@attemptLogin");
 Route::post('/search', "SearchController@search");

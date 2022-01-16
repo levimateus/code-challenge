@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\SpotifyAuthenticator;
+use App\SpotifyAccountService;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
+    const SPOTIFY_ACCOUNTS_BASE_URI = 'https://accounts.spotify.com';
+
     protected $clientId;
     protected $clientSecret;
     protected $redirectUri;
@@ -29,11 +31,9 @@ class LoginController extends Controller
 
     public function login()
     {
-        $scope = 'user-read-private user-read-email';
-
         $parameters = array(
             'client_id' => $this->clientId,
-            'scope' => $scope,
+            'scope' => 'user-read-private user-read-email',
             'response_type' => 'code',
             'redirect_uri' => $this->redirectUri,
         );
@@ -47,8 +47,14 @@ class LoginController extends Controller
             return redirect('/login');
         }
 
-        $spotifyAuthenticator = new SpotifyAuthenticator($this->clientId, $this->clientSecret, $this->redirectUri);
-        $token = $spotifyAuthenticator->requestAccessToken($request->get('code'));
+        $spotifyAuthenticator = new SpotifyAccountService(
+            self::SPOTIFY_ACCOUNTS_BASE_URI,
+            'Basic ' . base64_encode(
+                "{$this->clientId}:{$this->clientSecret}"
+            )
+        );
+
+        $token = $spotifyAuthenticator->requestAccessToken($request->get('code'), $this->redirectUri);
 
         session(array('accessToken' => $token));
 

@@ -3,7 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
+use DateInterval;
+use DateTimeImmutable;
 
 class RedirectIfAuthenticated
 {
@@ -17,8 +18,13 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (Auth::guard($guard)->check()) {
-            return redirect('/');
+        $accessToken = $request->session()->get('accessToken', false);
+
+        $now = new DateTimeImmutable();
+        if (!empty($accessToken)) {
+            if ($accessToken['issued_at']->add(new DateInterval("PT{$accessToken['expires_in']}S")) >= $now) {
+                return redirect('/');
+            }
         }
 
         return $next($request);

@@ -20,6 +20,10 @@ class SpotifyAccountService extends AbstractService
 
         $token = $this->call('POST', '/api/token', array(), $params, true);
 
+        if ($token === false) {
+            return false;
+        }
+
         $currentTime = new DateTimeImmutable();
         $token['issued_at'] = $currentTime;
 

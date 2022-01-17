@@ -16,6 +16,8 @@ class LoginController extends Controller
 
     protected $redirectTo = '/';
 
+    protected $spotifyAccountService;
+
     public function __construct()
     {
         $this->middleware('guest');
@@ -47,17 +49,27 @@ class LoginController extends Controller
             return redirect('/login');
         }
 
-        $spotifyAuthenticator = new SpotifyAccountService(
-            self::SPOTIFY_ACCOUNTS_BASE_URI,
-            'Basic ' . base64_encode(
-                "{$this->clientId}:{$this->clientSecret}"
-            )
+        $token = $this->getSpotifyAccountService()->requestAccessToken(
+            $request->get('code'),
+            $this->redirectUri
         );
-
-        $token = $spotifyAuthenticator->requestAccessToken($request->get('code'), $this->redirectUri);
 
         session(array('accessToken' => $token));
 
         return redirect('/');
+    }
+
+    protected function getSpotifyAccountService()
+    {
+        if (empty($this->spotifyAccountService)) {
+            $this->spotifyAccountService = new SpotifyAccountService(
+                self::SPOTIFY_ACCOUNTS_BASE_URI,
+                'Basic ' . base64_encode(
+                    "{$this->clientId}:{$this->clientSecret}"
+                )
+            );
+        }
+
+        return $this->spotifyAccountService;
     }
 }

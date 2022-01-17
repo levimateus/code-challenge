@@ -3,6 +3,7 @@
 namespace App;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
 
 abstract class AbstractService
@@ -14,6 +15,12 @@ abstract class AbstractService
     {
         $this->client = new Client(array('base_uri' => $baseUri));
         $this->authorization = $authorization;
+    }
+
+    public function setClient(ClientInterface $client)
+    {
+        $this->client = $client;
+        return $this;
     }
 
     protected function call($method, $uri, $queryParams = array(), $body = null, $isForm = false)

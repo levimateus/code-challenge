@@ -28,12 +28,18 @@
         <div class="row">
             <div class="result">
                 Your Search Term Was: <b>{{$searchTerm}}</b>
+                <br><br>
+                <ul>
+                    <li><a href="#tracks">Tracks</a></li>
+                    <li><a href="#artists">Artists</a></li>
+                    <li><a href="#albums">Albums</a></li>
+                </ul>
             </div>
         </div>
 
         <div class="row mb-5">
             <div class="col-12">
-                <h2 class="text-muted">Tracks</h6>
+                <h2 class="text-muted" id="tracks">Tracks</h6>
                 <div class="list-group col-12">
                         @foreach ($results['tracks']['items'] as $track)
                         <a class="list-group-item d-flex justify-content-between align-items-center" href="/track/{{ $track['id'] }}">
@@ -49,13 +55,13 @@
 
         <div class="row mb-5">
             <div class="col-12">
-                <h2 class="text-muted">Artists</h6>
+                <h2 class="text-muted" id="artists">Artists</h6>
                 <div class="list-group col-12">
                         @foreach ($results['artists']['items'] as $artist)
                         <a class="list-group-item d-flex justify-content-between align-items-center" href="/artist/{{ $artist['id'] }}">
                             {{ $artist['name'] }}
                             <div class="image-parent">
-                                <img src="{{ $artist['images'][0]['url'] ?? '' }}" class="img-thumbnail rounded" alt="{{ $artist['name'] }}" width="150px">
+                                <img src="{{ $artist['images'][0]['url'] ?? 'https://media.tarkett-image.com/large/TH_25094225_25187225_001.jpg' }}" class="img-thumbnail rounded" alt="{{ $artist['name'] }}" width="150px">
                             </div>
                         </a>
                         @endforeach
@@ -65,13 +71,13 @@
 
         <div class="row mb-5">
             <div class="col-12">
-                <h2 class="text-muted">Albums</h6>
+                <h2 class="text-muted" id="albums">Albums</h6>
                 <div class="list-group col-12">
                         @foreach ($results['albums']['items'] as $album)
                         <a class="list-group-item d-flex justify-content-between align-items-center" href="/album/{{ $album['id'] }}">
                             {{ $album['name'] }}
                             <div class="image-parent">
-                                <img src="{{ $album['images'][0]['url'] ?? '' }}" class="img-thumbnail rounded" alt="{{ $album['name'] }}" width="150px">
+                                <img src="{{ $album['images'][0]['url'] ?? 'https://media.tarkett-image.com/large/TH_25094225_25187225_001.jpg' }}" class="img-thumbnail rounded" alt="{{ $album['name'] }}" width="150px">
                             </div>
                         </a>
                         @endforeach
